@@ -9,9 +9,10 @@ public class PlayerCotrol : MonoBehaviour
     [Header("Movement Settings")]
     private CustomInput input;
     private Rigidbody rb;
-    [SerializeField] private float speed = 5;
+    [SerializeField] private float moveSpeed = 5;
     [SerializeField] private float currentSpeed = 0;
-    [SerializeField] private float jump = 5;
+    [SerializeField] private float jumpSpeed = 5;
+    [SerializeField] private float hookSpeed = 5;
     [SerializeField] private float movingDownSpeed = 400;
     
     [Header("Ground Check Settings")]
@@ -100,11 +101,11 @@ public class PlayerCotrol : MonoBehaviour
     // Moving
     private void OnMovementPerformed(InputAction.CallbackContext value)
     {
-        currentSpeed = speed * value.ReadValue<float>();
+        currentSpeed = moveSpeed * value.ReadValue<float>();
     }
     private void OnMovementCanceled(InputAction.CallbackContext value)
     {
-        currentSpeed = speed * 0;
+        currentSpeed = moveSpeed * 0;
     }
     
     // Jumping
@@ -114,7 +115,7 @@ public class PlayerCotrol : MonoBehaviour
         {
             //the player is on a ground
             
-            rb.AddForce(Vector3.up * jump , mode: ForceMode.Impulse);
+            rb.AddForce(Vector3.up * jumpSpeed , mode: ForceMode.Impulse);
         }
     }
     private void OnJumpCanceled(InputAction.CallbackContext obj)
@@ -126,7 +127,7 @@ public class PlayerCotrol : MonoBehaviour
     private void OnHookPerformed(InputAction.CallbackContext value)
     {
         
-        transform.position = Input.mousePosition/100;
+        rb.AddForce((mousePostion - transform.position).normalized * hookSpeed ,mode: ForceMode.Impulse);
     }
     private void OnHookCanceled(InputAction.CallbackContext obj)
     {
