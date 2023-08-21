@@ -12,6 +12,7 @@ public class PlayerCotrol : MonoBehaviour
     [SerializeField] private float speed = 5;
     [SerializeField] private float currentSpeed = 0;
     [SerializeField] private float jump = 5;
+    [SerializeField] private float hookSpeed = 5;
     [SerializeField] private float movingDownSpeed = 400;
     
     [Header("Ground Check Settings")]
@@ -125,8 +126,7 @@ public class PlayerCotrol : MonoBehaviour
     // Shankiling
     private void OnHookPerformed(InputAction.CallbackContext value)
     {
-        
-        transform.position = Input.mousePosition/100;
+        rb.AddForce((mousePostion - transform.position).normalized * hookSpeed ,mode: ForceMode.Impulse);
     }
     private void OnHookCanceled(InputAction.CallbackContext obj)
     {
