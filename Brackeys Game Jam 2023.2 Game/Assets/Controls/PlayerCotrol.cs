@@ -27,6 +27,9 @@ public class PlayerCotrol : MonoBehaviour
 
     private Vector3 mousePostion = Vector3.zero;
     
+    [Header("Gun Settings")]
+    [SerializeField] private GameObject gun;
+    
     // Start is called before the first frame update
     void Awake()
     {
@@ -44,16 +47,28 @@ public class PlayerCotrol : MonoBehaviour
     private void Update()
     {
         // mouse screen position to world position
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+        screenPositionToWorldPosition();
+        
+        // gun aim at mouse
+        gun.transform.LookAt(mousePostion);
 
-        if (Physics.Raycast(ray, out RaycastHit hit,1000,backgroundLayer)) 
+        //rotate player depending on the mouse
+        RotatePlayer();
+    }
+
+    private void RotatePlayer()
+    {
+        bool isMouseOnRightSide = mousePostion.x > transform.position.x;
+
+        if (isMouseOnRightSide)
         {
-            // the mouse hit a background layer
-            
-            Vector3 mouseWorldPos = hit.point; 
-            //removing depth
-            mouseWorldPos.z = 0;
-            mousePostion = mouseWorldPos;
+            transform.localScale =
+                new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
+        else
+        {
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y,
+                transform.localScale.z);
         }
     }
 
@@ -74,6 +89,8 @@ public class PlayerCotrol : MonoBehaviour
         
         input.Player.MoveDown.performed += OnMoveDown;
         
+        input.Player.Fire.performed += OnFire;
+        
     }
 
     
@@ -93,6 +110,8 @@ public class PlayerCotrol : MonoBehaviour
         input.Player.Hook.canceled -= OnHookCanceled;
 
         input.Player.MoveDown.performed -= OnMoveDown;
+        
+        input.Player.Fire.performed -= OnFire;
     }
 
     
@@ -138,7 +157,14 @@ public class PlayerCotrol : MonoBehaviour
     {
         rb.AddForce(Vector3.down * movingDownSpeed, mode: ForceMode.Acceleration);
     }
-    
+
+
+    // shooting
+    private void OnFire(InputAction.CallbackContext obj)
+    {
+        gun.GetComponent<Shooting>().Shoot();
+    }
+
     
     /// <summary>
     /// check for if the player is on a ground
@@ -147,5 +173,22 @@ public class PlayerCotrol : MonoBehaviour
     public bool IsGrounded()
     {
         return Physics.CheckSphere(groundCheck.transform.position, radiusOfGroundCheck, groundLayer);
+    }
+
+
+    // mouse screen position to world position
+    private void screenPositionToWorldPosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+
+        if (Physics.Raycast(ray, out RaycastHit hit,1000,backgroundLayer)) 
+        {
+            // the mouse hit a background layer
+            
+            Vector3 mouseWorldPos = hit.point; 
+            //removing depth
+            mouseWorldPos.z = 0;
+            mousePostion = mouseWorldPos;
+        }
     }
 }
