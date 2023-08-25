@@ -27,7 +27,7 @@ public class PlayerCotrol : MonoBehaviour
 
     public int mouseOnLayer = 0;
 
-    private Vector3 mousePostion = Vector3.zero;
+    public static Vector3 mousePostion = Vector3.zero;
     
     [Header("Gun Settings")]
     [SerializeField] private GameObject gun;
@@ -40,12 +40,16 @@ public class PlayerCotrol : MonoBehaviour
     private float hooktime = 0;
     private bool isHooking = false;
 
-    private Vector3 hookPostion = new Vector3(0,0,0);
+    public static Vector3 hookPostion = new Vector3(0,0,0);
+    private LineRenderer lineRend;
+    
     // Start is called before the first frame update
     void Awake()
     {
         input = new CustomInput();
         rb = this.GetComponent<Rigidbody>();
+        lineRend = FindObjectOfType<LineRenderer>();
+        lineRend.enabled = false;
     }
     
     private void FixedUpdate()
@@ -70,10 +74,12 @@ public class PlayerCotrol : MonoBehaviour
         
         if (isHooking)
         {
+            lineRend.enabled = true;
             rb.AddForce(hookshotDir * hookSpeed ,mode: ForceMode.Impulse);
         }
         else
         {
+            lineRend.enabled = false;
             isHooking = false;
         }
 
