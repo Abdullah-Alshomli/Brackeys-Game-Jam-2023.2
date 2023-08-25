@@ -25,11 +25,22 @@ public class PlayerCotrol : MonoBehaviour
     // layers the mouse can aim at
     [SerializeField] private LayerMask backgroundLayer;
 
+    public int mouseOnLayer = 0;
+
     private Vector3 mousePostion = Vector3.zero;
     
     [Header("Gun Settings")]
     [SerializeField] private GameObject gun;
-    
+    [SerializeField] private float gunCooldown = 0.1f;
+    private float gunTime = 0;
+
+    [Header("Hook Settings")] 
+    [SerializeField]private float hookCooldown = 1;
+
+    private float hooktime = 0;
+    private bool isHooking = false;
+
+    private Vector3 hookPostion = new Vector3(0,0,0);
     // Start is called before the first frame update
     void Awake()
     {
@@ -37,11 +48,37 @@ public class PlayerCotrol : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
     }
     
-    
     private void FixedUpdate()
     {
         //moving the player
-        rb.transform.position += Vector3.right * (currentSpeed * Time.deltaTime);
+        //rb.transform.position += Vector3.right * (currentSpeed * Time.deltaTime);
+        if (IsGrounded())
+        {
+            rb.AddForce(Vector3.right * (currentSpeed), mode: ForceMode.VelocityChange);
+            //rb.velocity = Vector3.ClampMagnitude(rb.velocity, 15);
+        }
+        else
+        {
+            rb.AddForce(Vector3.right * (currentSpeed/2), mode: ForceMode.VelocityChange);
+            //rb.velocity = Vector3.ClampMagnitude(rb.velocity, 15);
+        }
+        
+        
+        
+        //hook-shot movement
+        Vector3 hookshotDir = (hookPostion - transform.position).normalized;
+        
+        if (isHooking)
+        {
+            rb.AddForce(hookshotDir * hookSpeed ,mode: ForceMode.Impulse);
+        }
+        else
+        {
+            isHooking = false;
+        }
+
+        hooktime -= Time.deltaTime;
+        gunTime -= Time.deltaTime;
     }
 
     private void Update()
@@ -113,10 +150,8 @@ public class PlayerCotrol : MonoBehaviour
         
         input.Player.Fire.performed -= OnFire;
     }
-
     
     
-
     // Moving
     private void OnMovementPerformed(InputAction.CallbackContext value)
     {
@@ -136,6 +171,8 @@ public class PlayerCotrol : MonoBehaviour
             
             rb.AddForce(Vector3.up * jump , mode: ForceMode.Impulse);
         }
+        // stop hooking
+        isHooking = false;
     }
     private void OnJumpCanceled(InputAction.CallbackContext obj)
     {
@@ -145,8 +182,19 @@ public class PlayerCotrol : MonoBehaviour
     // Shankiling
     private void OnHookPerformed(InputAction.CallbackContext value)
     {
-        rb.AddForce((mousePostion - transform.position).normalized * hookSpeed ,mode: ForceMode.Impulse);
+        Debug.Log(mouseOnLayer);
+        if (hooktime <= 0 && mouseOnLayer == Layers.Ground)
+        {
+            if (isHooking)
+            {
+                isHooking = false;
+            }
+            isHooking = true;
+            hookPostion = mousePostion;
+            hooktime = hookCooldown;
+        }
     }
+    
     private void OnHookCanceled(InputAction.CallbackContext obj)
     {
         Debug.Log(obj.ReadValueAsButton());
@@ -162,7 +210,13 @@ public class PlayerCotrol : MonoBehaviour
     // shooting
     private void OnFire(InputAction.CallbackContext obj)
     {
-        gun.GetComponent<Shooting>().Shoot();
+        if (gunTime <= 0)
+        {
+            gun.GetComponent<Shooting>().Shoot();
+            gunTime = gunCooldown;
+        }
+
+
     }
 
     
@@ -185,6 +239,9 @@ public class PlayerCotrol : MonoBehaviour
         {
             // the mouse hit a background layer
             
+            /*use for hook*/
+            mouseOnLayer = hit.transform.gameObject.layer;
+
             Vector3 mouseWorldPos = hit.point; 
             //removing depth
             mouseWorldPos.z = 0;

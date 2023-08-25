@@ -24,7 +24,15 @@ public class Snowball : MonoBehaviour
     
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("add collision");
+        if (other.gameObject.layer == Layers.Enemis)
+        {
+            other.gameObject.GetComponent<HPComponent>().TakeDamage(damage);
+            Destroy(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     
 }
