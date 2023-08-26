@@ -6,6 +6,7 @@ using UnityEngine;
 public class HPComponent : MonoBehaviour
 {
     [SerializeField] private int HP = 10;
+    [SerializeField] private int maxHP = 100;
     private bool isActive = true;
 
 
@@ -38,7 +39,16 @@ public class HPComponent : MonoBehaviour
     {
         if (IsActive)
         {
-            HP += HealAmount;
+            if (HealAmount + HP < maxHP + 1)
+            {
+                HP += HealAmount;
+            }
+            else
+            {
+                Hp = maxHP;
+            }
+
+
         }
     }
     

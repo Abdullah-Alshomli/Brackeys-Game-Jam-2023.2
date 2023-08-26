@@ -23,7 +23,7 @@ public class PlayerColletion : MonoBehaviour
     {
         if (other.gameObject.layer == Layers.Enemis && invincibilityTime <= 0)
         {
-            gameObject.GetComponent<HPComponent>().TakeDamage(1);
+            gameObject.GetComponent<HPComponent>().TakeDamage(10);
         }
     }
 }

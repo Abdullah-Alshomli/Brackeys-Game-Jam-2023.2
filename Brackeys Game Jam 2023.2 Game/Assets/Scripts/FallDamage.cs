@@ -6,7 +6,7 @@ using UnityEngine;
 public class FallDamage : MonoBehaviour
 {
     public float fallDamageThreshold = 10f;
-    public float fallDamageMultiplier = 1f;
+    public float fallDamageMultiplier = 3f;
     private HPComponent playerHP;
     private void Start()
     {

@@ -12,7 +12,6 @@ public class PlayerCotrol : MonoBehaviour
     [SerializeField] private float speed = 5;
     [SerializeField] private float currentSpeed = 0;
     [SerializeField] private float jump = 5;
-    [SerializeField] private float hookSpeed = 5;
     [SerializeField] private float movingDownSpeed = 400;
     
     [Header("Ground Check Settings")]
@@ -35,13 +34,20 @@ public class PlayerCotrol : MonoBehaviour
     private float gunTime = 0;
 
     [Header("Hook Settings")] 
-    [SerializeField]private float hookCooldown = 1;
+    [SerializeField] private float hookCooldown = 1;
+    [SerializeField] private float hookSpeed = 2;
 
     private float hooktime = 0;
     private bool isHooking = false;
+    private bool canHook = false;
 
     public static Vector3 hookPostion = new Vector3(0,0,0);
     private LineRenderer lineRend;
+
+    [Header("Pause Settings")]
+    [SerializeField] private GameObject popup;
+    
+    
     
     // Start is called before the first frame update
     void Awake()
@@ -93,7 +99,8 @@ public class PlayerCotrol : MonoBehaviour
         screenPositionToWorldPosition();
         
         // gun aim at mouse
-        gun.transform.LookAt(mousePostion);
+        Vector3 newPostion = new Vector3(mousePostion.x, mousePostion.y, gun.transform.position.z);
+        gun.transform.LookAt(newPostion);
 
         //rotate player depending on the mouse
         RotatePlayer();
@@ -133,7 +140,10 @@ public class PlayerCotrol : MonoBehaviour
         input.Player.MoveDown.performed += OnMoveDown;
         
         input.Player.Fire.performed += OnFire;
-        
+
+        input.Player.Pause.performed += OnPause;
+        input.Player.Pause.canceled -= OnPause;
+         
     }
 
     
@@ -188,16 +198,18 @@ public class PlayerCotrol : MonoBehaviour
     // Shankiling
     private void OnHookPerformed(InputAction.CallbackContext value)
     {
-        Debug.Log(mouseOnLayer);
-        if (hooktime <= 0 && mouseOnLayer == Layers.Ground)
+        if (canHook)
         {
-            if (isHooking)
+            if (hooktime <= 0 && mouseOnLayer == Layers.Ground)
             {
-                isHooking = false;
+                if (isHooking)
+                {
+                    isHooking = false;
+                }
+                isHooking = true;
+                hookPostion = mousePostion;
+                hooktime = hookCooldown;
             }
-            isHooking = true;
-            hookPostion = mousePostion;
-            hooktime = hookCooldown;
         }
     }
     
@@ -224,6 +236,13 @@ public class PlayerCotrol : MonoBehaviour
 
 
     }
+    
+    // pause popup
+    private void OnPause(InputAction.CallbackContext obj)
+    {
+
+    }
+    
 
     
     /// <summary>
@@ -254,4 +273,11 @@ public class PlayerCotrol : MonoBehaviour
             mousePostion = mouseWorldPos;
         }
     }
+
+    public void startHook()
+    {
+        canHook = true;
+    }
+
+
 }
