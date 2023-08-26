@@ -53,9 +53,9 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.43889531
+  m_Radius: 0.5
   m_Height: 1
-  m_Direction: 1
+  m_Direction: 2
   m_Center: {x: -0.0026263297, y: 0.41974926, z: 0}
 --- !u!114 &5267961429044481150
 MonoBehaviour:
@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0842e7e3240c84c8ce383e320cb85a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpOnEnemyForce: 5
+  jumpOnEnemyForce: 10
 --- !u!54 &7125964739293478960
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -418,7 +418,7 @@ MonoBehaviour:
   currentSpeed: 0
   jump: 15
   hookSpeed: 2
-  movingDownSpeed: 400
+  movingDownSpeed: 5
   groundCheck: {fileID: 610860115410483162}
   radiusOfGroundCheck: 0.8
   groundLayer:
@@ -519,7 +519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97e4d1de04a6dfe4694c9b8b1a5a6a8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallDamageThreshold: 100
+  fallDamageThreshold: 16
   fallDamageMultiplier: 1
 --- !u!1001 &4102674653529704977
 PrefabInstance:

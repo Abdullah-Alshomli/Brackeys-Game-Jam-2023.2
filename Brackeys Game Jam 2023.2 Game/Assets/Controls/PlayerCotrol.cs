@@ -209,7 +209,7 @@ public class PlayerCotrol : MonoBehaviour
     // Moving down 
     private void OnMoveDown(InputAction.CallbackContext obj)
     {
-        rb.AddForce(Vector3.down * movingDownSpeed, mode: ForceMode.Acceleration);
+        rb.AddForce(Vector3.down * movingDownSpeed, mode: ForceMode.Impulse);
     }
 
 
